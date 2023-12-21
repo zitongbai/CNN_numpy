@@ -1,26 +1,19 @@
 import numpy as np
 
-'''
-Note: In this implementation, we assume the input is a 2d numpy array for simplicity, because that's
-how our MNIST images are stored. This works for us because we use it as the first layer in our
-network, but most CNNs have many more Conv layers. If we were building a bigger network that needed
-to use Conv3x3 multiple times, we'd have to make the input be a 3d numpy array.
-'''
-
 class Conv3x3:
-    # A Convolution layer using 3x3 filters.
+    # 使用3x3滤波器的卷积层。
 
     def __init__(self, num_filters):
         self.num_filters = num_filters
 
-        # filters is a 3d array with dimensions (num_filters, 3, 3)
-        # We divide by 9 to reduce the variance of our initial values
+        # filters是一个3维数组，维度为(num_filters, 3, 3)
+        # 我们除以9来减小初始值的方差
         self.filters = np.random.randn(num_filters, 3, 3) / 9
 
     def iterate_regions(self, image):
         '''
-        Generates all possible 3x3 image regions using valid padding.
-        - image is a 2d numpy array.
+        生成所有可能的3x3图像区域，使用valid padding。
+        - image是一个2维numpy数组。
         '''
         h, w = image.shape
 
@@ -31,9 +24,9 @@ class Conv3x3:
 
     def forward(self, input):
         '''
-        Performs a forward pass of the conv layer using the given input.
-        Returns a 3d numpy array with dimensions (h, w, num_filters).
-        - input is a 2d numpy array
+        使用给定的输入执行卷积层的前向传播。
+        返回一个3维numpy数组，维度为(h, w, num_filters)。
+        - input是一个2维numpy数组
         '''
         self.last_input = input
 
@@ -47,9 +40,9 @@ class Conv3x3:
 
     def backprop(self, d_L_d_out, learn_rate):
         '''
-        Performs a backward pass of the conv layer.
-        - d_L_d_out is the loss gradient for this layer's outputs.
-        - learn_rate is a float.
+        执行卷积层的反向传播。
+        - d_L_d_out是该层输出的损失梯度。
+        - learn_rate是一个浮点数。
         '''
         d_L_d_filters = np.zeros(self.filters.shape)
 
@@ -57,10 +50,9 @@ class Conv3x3:
             for f in range(self.num_filters):
                 d_L_d_filters[f] += d_L_d_out[i, j, f] * im_region
 
-        # Update filters
+        # 更新filters
         self.filters -= learn_rate * d_L_d_filters
 
-        # We aren't returning anything here since we use Conv3x3 as the first layer in our CNN.
-        # Otherwise, we'd need to return the loss gradient for this layer's inputs, just like every
-        # other layer in our CNN.
+        # 我们这里不返回任何东西，因为我们将Conv3x3作为CNN中的第一层。
+        # 否则，我们需要返回该层输入的损失梯度，就像CNN中的每一层一样。
         return None

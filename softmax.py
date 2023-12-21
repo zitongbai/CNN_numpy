@@ -1,18 +1,18 @@
 import numpy as np
 
 class Softmax:
-    # A standard fully-connected layer with softmax activation.
+    # 一个带有softmax激活函数的标准全连接层。
 
     def __init__(self, input_len, nodes):
-        # We divide by input_len to reduce the variance of our initial values
+        # 我们通过input_len除以input_len来减小初始值的方差
         self.weights = np.random.randn(input_len, nodes) / input_len
         self.biases = np.zeros(nodes)
 
     def forward(self, input):
         '''
-        Performs a forward pass of the softmax layer using the given input.
-        Returns a 1d numpy array containing the respective probability values.
-        - input can be any array with any dimensions.
+        使用给定的输入执行softmax层的前向传播。
+        返回一个包含相应概率值的一维numpy数组。
+        - input可以是任何维度的任何数组。
         '''
         self.last_input_shape = input.shape
 
@@ -29,12 +29,12 @@ class Softmax:
 
     def backprop(self, d_L_d_out, learn_rate):
         '''
-        Performs a backward pass of the softmax layer.
-        Returns the loss gradient for this layer's inputs.
-        - d_L_d_out is the loss gradient for this layer's outputs.
-        - learn_rate is a float.
+        执行softmax层的反向传播。
+        返回该层输入的损失梯度。
+        - d_L_d_out是该层输出的损失梯度。
+        - learn_rate是一个浮点数。
         '''
-        # We know only 1 element of d_L_d_out will be nonzero
+        # 我们知道d_L_d_out中只有一个元素是非零的
         for i, gradient in enumerate(d_L_d_out):
             if gradient == 0:
                 continue
@@ -42,27 +42,27 @@ class Softmax:
             # e^totals
             t_exp = np.exp(self.last_totals)
 
-            # Sum of all e^totals
+            # 所有e^totals的和
             S = np.sum(t_exp)
 
-            # Gradients of out[i] against totals
+            # out[i]对totals的梯度
             d_out_d_t = -t_exp[i] * t_exp / (S ** 2)
             d_out_d_t[i] = t_exp[i] * (S - t_exp[i]) / (S ** 2)
 
-            # Gradients of totals against weights/biases/input
+            # totals对weights/biases/input的梯度
             d_t_d_w = self.last_input
             d_t_d_b = 1
             d_t_d_inputs = self.weights
 
-            # Gradients of loss against totals
+            # 损失对totals的梯度
             d_L_d_t = gradient * d_out_d_t
 
-            # Gradients of loss against weights/biases/input
+            # 损失对weights/biases/input的梯度
             d_L_d_w = d_t_d_w[np.newaxis].T @ d_L_d_t[np.newaxis]
             d_L_d_b = d_L_d_t * d_t_d_b
             d_L_d_inputs = d_t_d_inputs @ d_L_d_t
 
-            # Update weights / biases
+            # 更新weights / biases
             self.weights -= learn_rate * d_L_d_w
             self.biases -= learn_rate * d_L_d_b
 

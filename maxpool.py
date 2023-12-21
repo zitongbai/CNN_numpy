@@ -1,12 +1,12 @@
 import numpy as np
 
 class MaxPool2:
-    # A Max Pooling layer using a pool size of 2.
+    # 使用2x2的池化大小的最大池化层。
 
     def iterate_regions(self, image):
         '''
-        Generates non-overlapping 2x2 image regions to pool over.
-        - image is a 2d numpy array
+        生成非重叠的2x2图像区域进行池化。
+        - image是一个2维的numpy数组
         '''
         h, w, _ = image.shape
         new_h = h // 2
@@ -19,9 +19,9 @@ class MaxPool2:
 
     def forward(self, input):
         '''
-        Performs a forward pass of the maxpool layer using the given input.
-        Returns a 3d numpy array with dimensions (h / 2, w / 2, num_filters).
-        - input is a 3d numpy array with dimensions (h, w, num_filters)
+        对给定的输入进行最大池化层的前向传播。
+        返回一个3维的numpy数组，维度为(h / 2, w / 2, num_filters)。
+        - input是一个3维的numpy数组，维度为(h, w, num_filters)
         '''
         self.last_input = input
 
@@ -35,9 +35,9 @@ class MaxPool2:
 
     def backprop(self, d_L_d_out):
         '''
-        Performs a backward pass of the maxpool layer.
-        Returns the loss gradient for this layer's inputs.
-        - d_L_d_out is the loss gradient for this layer's outputs.
+        对最大池化层进行反向传播。
+        返回该层输入的损失梯度。
+        - d_L_d_out是该层输出的损失梯度。
         '''
         d_L_d_input = np.zeros(self.last_input.shape)
 
@@ -48,7 +48,7 @@ class MaxPool2:
             for i2 in range(h):
                 for j2 in range(w):
                     for f2 in range(f):
-                        # If this pixel was the max value, copy the gradient to it.
+                        # 如果该像素是最大值，则将梯度复制到该像素。
                         if im_region[i2, j2, f2] == amax[f2]:
                             d_L_d_input[i * 2 + i2, j * 2 + j2, f2] = d_L_d_out[i, j, f2]
 
